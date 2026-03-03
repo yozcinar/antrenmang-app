@@ -973,7 +973,12 @@ async function authSignUp() {
   if (!email || !pass) { setAuthMsg('E-posta ve şifre gerekli.', true); return; }
   if (pass.length < 6) { setAuthMsg('Şifre en az 6 karakter olmalı.', true); return; }
   setAuthMsg('Hesap oluşturuluyor...', false);
-  const { data, error } = await sb.auth.signUp({ email, password: pass });
+  const redirectTo = window.location.href.split('#')[0].split('?')[0];
+  const { data, error } = await sb.auth.signUp({
+    email,
+    password: pass,
+    options: { emailRedirectTo: redirectTo }
+  });
   if (error) { setAuthMsg(error.message, true); return; }
   if (!data.session) {
     setAuthMsg('Kayıt tamam. E-posta doğrulaması gerekebilir, sonra giriş yap.', false);
@@ -1015,7 +1020,7 @@ async function bootstrapCloudForUser() {
   queueCloudSave();
 }
 async function initCloudIfConfigured() {
-  if (!CLOUD_ENABLED || !window.supabase) {
+  if (!CLOUD_ENABLED) {
     if (!profiles.users.length) initFirstLaunch();
     else {
       setAccent((me() && me().color) || COLORS[0]);
@@ -1023,6 +1028,32 @@ async function initCloudIfConfigured() {
     }
     return;
   }
+
+  if (!window.supabase) {
+    const cdns = [
+      'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',
+      'https://unpkg.com/@supabase/supabase-js@2'
+    ];
+    for (const url of cdns) {
+      try {
+        await new Promise((resolve, reject) => {
+          const s = document.createElement('script');
+          s.src = url;
+          s.onload = resolve;
+          s.onerror = reject;
+          document.head.appendChild(s);
+        });
+        if (window.supabase) break;
+      } catch (_) {}
+    }
+  }
+
+  if (!window.supabase) {
+    showAuthOverlay();
+    setAuthMsg('Auth SDK yüklenemedi. Adblock kapatıp sayfayı yenile.', true);
+    return;
+  }
+
   sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   showAuthOverlay();
   setAuthMsg('Giriş yap veya kayıt ol.', false);
