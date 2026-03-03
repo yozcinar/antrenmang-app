@@ -467,6 +467,7 @@
     background: var(--surface); border: 1px solid var(--border);
     border-radius: 12px; padding: 10px 12px; cursor: pointer;
   }
+  .pool-item.picked { border-color: var(--accent); }
   .pool-item:active { opacity: 0.85; }
   .pool-item-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
   .pool-item-name { font-size: 14px; font-weight: 700; }
@@ -476,6 +477,13 @@
     color: #000; background: var(--accent); border-radius: 999px; padding: 4px 7px;
     font-weight: 800; white-space: nowrap;
   }
+  .pool-choice-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 14px; margin-bottom: 10px; cursor: pointer;
+  }
+  .pool-choice-card:active { opacity: 0.85; }
+  .pool-choice-title { font-size: 15px; font-weight: 800; }
+  .pool-choice-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
 
   /* COLOR PICKER */
   .color-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
@@ -571,36 +579,57 @@
   <div class="sheet">
     <div class="sheet-handle"></div>
     <div class="sheet-title">EGZERSİZ EKLE</div>
-    <div class="sheet-sub">Hazır havuzdan seç veya kendi hareketini yaz</div>
+    <div class="sheet-sub" id="addExSub">Hazır havuzdan seç veya kendi hareketini yaz</div>
     <div class="sheet-body">
-      <div class="form-group">
-        <label class="form-label">Hazır Egzersiz Havuzu</label>
-        <div class="pool-cat-row" id="poolCats"></div>
-        <div class="pool-list" id="poolList"></div>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Hareket Adı</label>
-        <input class="form-input" id="exName" type="text" placeholder="örn. Cable Fly">
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label class="form-label">Set Sayısı</label>
-          <input class="form-input" id="exSets" type="number" inputmode="numeric" placeholder="3">
+      <div id="addExStepChoice">
+        <div class="pool-choice-card" onclick="startPoolMode()">
+          <div class="pool-choice-title">Hazır Egzersiz Havuzu</div>
+          <div class="pool-choice-sub">Kategori seç, hareketi hızlıca doldur</div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Tekrar</label>
-          <input class="form-input" id="exReps" type="text" placeholder="12">
+        <div class="pool-choice-card" onclick="startManualMode()">
+          <div class="pool-choice-title">Kendim Yazacağım</div>
+          <div class="pool-choice-sub">Hareket adı, set ve tekrar bilgisini manuel gir</div>
         </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Teknik Notu (opsiyonel)</label>
-        <input class="form-input" id="exTip" type="text" placeholder="Yavaş ve kontrollü yap...">
+
+      <div id="addExStepPool" style="display:none;">
+        <div class="form-group">
+          <label class="form-label">Kategori</label>
+          <div class="pool-cat-row" id="poolCats"></div>
+          <div class="pool-list" id="poolList"></div>
+        </div>
+        <div class="sheet-footer" style="padding:0;">
+          <button class="sheet-btn primary" onclick="continueFromPool()">İLERLE</button>
+          <button class="sheet-btn secondary" onclick="showAddExStep('choice')">Geri</button>
+        </div>
+      </div>
+
+      <div id="addExStepForm" style="display:none;">
+        <div class="form-group">
+          <label class="form-label">Hareket Adı</label>
+          <input class="form-input" id="exName" type="text" placeholder="örn. Cable Fly">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Set Sayısı</label>
+            <input class="form-input" id="exSets" type="number" inputmode="numeric" placeholder="3">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tekrar</label>
+            <input class="form-input" id="exReps" type="text" placeholder="12">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Teknik Notu (opsiyonel)</label>
+          <input class="form-input" id="exTip" type="text" placeholder="Yavaş ve kontrollü yap...">
+        </div>
+        <div class="sheet-footer" style="padding:0;">
+          <button class="sheet-btn primary" onclick="saveExercise()">EKLE</button>
+          <button class="sheet-btn secondary" onclick="showAddExStep('choice')">Geri</button>
+        </div>
       </div>
     </div>
-    <div class="sheet-footer">
-      <button class="sheet-btn primary" onclick="saveExercise()">EKLE</button>
-      <button class="sheet-btn secondary" onclick="document.getElementById('addExOverlay').classList.remove('open')">İptal</button>
-    </div>
+    <div class="sheet-footer"><button class="sheet-btn secondary" onclick="document.getElementById('addExOverlay').classList.remove('open')">Kapat</button></div>
   </div>
 </div>
 
@@ -763,7 +792,14 @@ const EXERCISE_LIBRARY = {
     items: [
       { name: 'Machine Chest Press', sets: 4, reps: '10' },
       { name: 'İncline Dumbbell Press', sets: 3, reps: '10' },
+      { name: 'Flat Dumbbell Press', sets: 3, reps: '10' },
+      { name: 'Cable Crossover', sets: 3, reps: '12' },
+      { name: 'Cable Fly (High to Low)', sets: 3, reps: '12' },
+      { name: 'Cable Fly (Low to High)', sets: 3, reps: '12' },
+      { name: 'Pec Deck Fly', sets: 3, reps: '12' },
       { name: 'Cable Fly', sets: 3, reps: '12' },
+      { name: 'Incline Cable Fly', sets: 3, reps: '12' },
+      { name: 'Chest Dip', sets: 3, reps: '8-12' },
       { name: 'Push-Up', sets: 3, reps: 'Maks' }
     ]
   },
@@ -773,7 +809,13 @@ const EXERCISE_LIBRARY = {
       { name: 'Lat Pulldown', sets: 3, reps: '10' },
       { name: 'Barbell Row', sets: 4, reps: '8' },
       { name: 'Cable Row (tek kol)', sets: 3, reps: '10' },
-      { name: 'Face Pull', sets: 3, reps: '15' }
+      { name: 'Seated Cable Row', sets: 3, reps: '10' },
+      { name: 'Close Grip Lat Pulldown', sets: 3, reps: '10' },
+      { name: 'Straight Arm Cable Pulldown', sets: 3, reps: '12' },
+      { name: 'Cable Pullover', sets: 3, reps: '12' },
+      { name: 'Single Arm Lat Pulldown', sets: 3, reps: '10' },
+      { name: 'Face Pull', sets: 3, reps: '15' },
+      { name: 'Deadlift', sets: 3, reps: '5' }
     ]
   },
   omuz: {
@@ -781,7 +823,12 @@ const EXERCISE_LIBRARY = {
     items: [
       { name: 'Shoulder Press', sets: 3, reps: '10' },
       { name: 'Lateral Raise', sets: 3, reps: '15' },
+      { name: 'Cable Lateral Raise', sets: 3, reps: '12' },
+      { name: 'Cable Front Raise', sets: 3, reps: '12' },
+      { name: 'Cable Rear Delt Fly', sets: 3, reps: '12' },
       { name: 'Rear Delt Fly', sets: 3, reps: '15' },
+      { name: 'Arnold Press', sets: 3, reps: '10' },
+      { name: 'Upright Row', sets: 3, reps: '12' },
       { name: 'Face Pull', sets: 3, reps: '15' }
     ]
   },
@@ -790,17 +837,39 @@ const EXERCISE_LIBRARY = {
     items: [
       { name: 'Squat', sets: 4, reps: '8' },
       { name: 'Leg Press', sets: 3, reps: '12' },
+      { name: 'Romanian Deadlift', sets: 3, reps: '10' },
+      { name: 'Bulgarian Split Squat', sets: 3, reps: '10/taraf' },
       { name: 'Leg Curl', sets: 3, reps: '12' },
+      { name: 'Leg Extension', sets: 3, reps: '15' },
+      { name: 'Walking Lunge', sets: 3, reps: '12/taraf' },
+      { name: 'Hip Thrust', sets: 3, reps: '12' },
       { name: 'Calf Raise', sets: 4, reps: '15' }
     ]
   },
-  kol: {
-    label: 'Kol',
+  biceps: {
+    label: 'Biceps',
     items: [
       { name: 'Bicep Curl (bar)', sets: 3, reps: '12' },
+      { name: 'EZ Bar Curl', sets: 3, reps: '12' },
       { name: 'Hammer Curl', sets: 3, reps: '12' },
+      { name: 'Incline Dumbbell Curl', sets: 3, reps: '12' },
+      { name: 'Cable Curl', sets: 3, reps: '12' },
+      { name: 'Cable Rope Hammer Curl', sets: 3, reps: '12' },
+      { name: 'Preacher Curl', sets: 3, reps: '10' },
+      { name: 'Concentration Curl', sets: 3, reps: '12' }
+    ]
+  },
+  triceps: {
+    label: 'Triceps',
+    items: [
       { name: 'Tricep Pushdown', sets: 3, reps: '12' },
-      { name: 'Skull Crusher', sets: 3, reps: '10' }
+      { name: 'Rope Pushdown', sets: 3, reps: '12' },
+      { name: 'Overhead Cable Extension', sets: 3, reps: '12' },
+      { name: 'Cable Kickback', sets: 3, reps: '12' },
+      { name: 'Single Arm Pushdown', sets: 3, reps: '12' },
+      { name: 'Skull Crusher', sets: 3, reps: '10' },
+      { name: 'Close Grip Bench Press', sets: 3, reps: '8-10' },
+      { name: 'Bench Dip', sets: 3, reps: 'Maks' }
     ]
   }
 };
@@ -1601,6 +1670,34 @@ function importProgram() {
 // ============================================================
 let addExDay = null;
 let addExCategory = 'gogus';
+let addExPickedIndex = -1;
+
+function showAddExStep(step) {
+  const choice = document.getElementById('addExStepChoice');
+  const pool = document.getElementById('addExStepPool');
+  const form = document.getElementById('addExStepForm');
+  const sub = document.getElementById('addExSub');
+  if (!choice || !pool || !form || !sub) return;
+
+  choice.style.display = step === 'choice' ? 'block' : 'none';
+  pool.style.display = step === 'pool' ? 'block' : 'none';
+  form.style.display = step === 'form' ? 'block' : 'none';
+
+  if (step === 'choice') sub.textContent = 'Hazır havuzdan seç veya kendi hareketini yaz';
+  if (step === 'pool') sub.textContent = 'Kategori seç, hareket seç, sonra ilerle';
+  if (step === 'form') sub.textContent = 'Hareket detayını kontrol et ve ekle';
+}
+
+function startPoolMode() {
+  addExPickedIndex = -1;
+  renderExercisePool();
+  showAddExStep('pool');
+}
+
+function startManualMode() {
+  showAddExStep('form');
+  document.getElementById('exName').focus();
+}
 
 function renderExercisePool() {
   const cats = document.getElementById('poolCats');
@@ -1620,7 +1717,7 @@ function renderExercisePool() {
   const items = EXERCISE_LIBRARY[addExCategory]?.items || [];
   items.forEach((ex, i) => {
     const el = document.createElement('div');
-    el.className = 'pool-item';
+    el.className = 'pool-item' + (i === addExPickedIndex ? ' picked' : '');
     el.innerHTML = `
       <div class="pool-item-top">
         <div>
@@ -1637,23 +1734,35 @@ function renderExercisePool() {
 
 function setAddExCategory(catKey) {
   addExCategory = catKey;
+  addExPickedIndex = -1;
   renderExercisePool();
 }
 
 function applyLibraryExercise(index) {
+  addExPickedIndex = index;
   const ex = EXERCISE_LIBRARY[addExCategory]?.items?.[index];
   if (!ex) return;
   document.getElementById('exName').value = ex.name || '';
   document.getElementById('exSets').value = ex.sets || '';
   document.getElementById('exReps').value = ex.reps || '';
   document.getElementById('exTip').value = ex.tip || TIPS[ex.name] || '';
+  renderExercisePool();
+}
+
+function continueFromPool() {
+  if (addExPickedIndex < 0 || !document.getElementById('exName').value.trim()) {
+    toast('Önce bir egzersiz seç');
+    return;
+  }
+  showAddExStep('form');
 }
 
 function openAddEx() {
   addExDay = st.currentDay;
   addExCategory = 'gogus';
+  addExPickedIndex = -1;
   ['exName','exSets','exReps','exTip'].forEach(id => document.getElementById(id).value = '');
-  renderExercisePool();
+  showAddExStep('choice');
   document.getElementById('addExOverlay').classList.add('open');
 }
 function closeAddEx(e) { if (e.target.id === 'addExOverlay') document.getElementById('addExOverlay').classList.remove('open'); }
