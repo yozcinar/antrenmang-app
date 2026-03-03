@@ -12,6 +12,10 @@
     --border: #2a2a2a; --done: #2a3a1a; --done-border: #6abf3a;
     --anim-fast: 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
     --anim-mid: 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    --r-sm: 10px;
+    --r-md: 14px;
+    --r-lg: 18px;
+    --r-xl: 24px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -19,7 +23,7 @@
     color: var(--text);
     font-family: 'DM Sans', sans-serif;
     min-height: 100vh; max-width: 430px;
-    margin: 0 auto; padding-bottom: 88px;
+    margin: 0 auto; padding-bottom: 118px;
     overflow-x: hidden;
     position: relative;
     isolation: isolate;
@@ -72,7 +76,7 @@
   .user-pill {
     display: flex; align-items: center; gap: 8px;
     background: var(--card); border: 1px solid var(--border);
-    border-radius: 20px; padding: 5px 12px 5px 5px;
+    border-radius: var(--r-lg); padding: 5px 12px 5px 5px;
     cursor: pointer; transition: all 0.2s; flex-shrink: 0; color: var(--text);
   }
   .user-pill:active { opacity: 0.7; }
@@ -94,7 +98,7 @@
   .week-btn {
     flex-shrink: 0; background: var(--card); border: 1px solid var(--border);
     color: var(--muted); font-family: 'DM Sans', sans-serif;
-    font-size: 12px; font-weight: 500; padding: 6px 14px; border-radius: 20px;
+    font-size: 12px; font-weight: 500; padding: 6px 14px; border-radius: var(--r-lg);
     cursor: pointer; transition: all 0.2s;
   }
   .week-btn.active { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 600; }
@@ -103,7 +107,7 @@
   .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 12px 20px; }
   .stat-box {
     background: var(--card); border: 1px solid var(--border);
-    border-radius: 12px; padding: 12px; text-align: center;
+    border-radius: var(--r-md); padding: 12px; text-align: center;
   }
   .stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--accent); line-height: 1; }
   .stat-label { font-size: 10px; color: var(--muted); margin-top: 2px; }
@@ -115,7 +119,7 @@
   .day-tab {
     grid-column: span 2;
     background: var(--card); border: 1px solid var(--border);
-    border-radius: 12px; padding: 10px 6px; text-align: center;
+    border-radius: var(--r-md); padding: 10px 6px; text-align: center;
     cursor: pointer; transition: all 0.2s;
   }
   .day-tab.active { background: var(--accent); border-color: var(--accent); }
@@ -174,7 +178,7 @@
   .exercises { padding: 0 20px; display: flex; flex-direction: column; gap: 10px; }
   .exercise-card {
     background: var(--card); border: 1px solid var(--border);
-    border-radius: 16px; overflow: hidden; transition: all 0.3s;
+    border-radius: var(--r-lg); overflow: hidden; transition: all 0.3s;
   }
   .exercise-card.done { background: var(--done); border-color: var(--done-border); }
   .exercise-card.custom-ex { border-left: 3px solid var(--accent); position: relative; }
@@ -234,7 +238,7 @@
   .add-ex-btn {
     margin: 10px 20px 0; width: calc(100% - 40px);
     background: transparent; border: 1px dashed var(--border);
-    border-radius: 14px; padding: 14px; color: var(--muted);
+    border-radius: var(--r-md); padding: 14px; color: var(--muted);
     font-family: 'DM Sans', sans-serif; font-size: 14px;
     cursor: pointer; transition: all 0.2s; text-align: center;
   }
@@ -242,7 +246,7 @@
   .complete-btn {
     margin: 14px 20px 0; width: calc(100% - 40px);
     background: var(--accent); color: #000; border: none;
-    border-radius: 14px; padding: 16px;
+    border-radius: var(--r-md); padding: 16px;
     font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px;
     cursor: pointer; transition: all 0.2s;
   }
@@ -259,27 +263,28 @@
 
   /* BOTTOM NAV */
   .bottom-nav {
-    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-    width: 100%; max-width: 430px;
-    background: linear-gradient(180deg, rgba(12,14,18,0.84) 0%, rgba(8,9,12,0.94) 100%);
+    position: fixed; bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); left: 50%; transform: translateX(-50%);
+    width: calc(100% - 18px); max-width: 412px;
+    background: linear-gradient(180deg, rgba(14,17,22,0.9) 0%, rgba(8,10,14,0.96) 100%);
     backdrop-filter: blur(22px) saturate(120%);
     -webkit-backdrop-filter: blur(22px) saturate(120%);
-    border-top: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--r-xl);
     display: grid; grid-template-columns: 1fr 1fr;
-    padding: 8px 14px calc(env(safe-area-inset-bottom, 14px) + 2px); gap: 8px;
+    padding: 8px; gap: 8px;
     z-index: 200;
-    box-shadow: 0 -8px 26px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.05);
+    box-shadow: 0 14px 36px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.07);
   }
   .bottom-nav::before {
     content: "";
-    position: absolute; top: 0; left: 8%; right: 8%; height: 1px;
+    position: absolute; top: 0; left: 12%; right: 12%; height: 1px;
     background: linear-gradient(90deg, transparent, rgba(79,240,255,0.35), rgba(232,255,71,0.35), transparent);
     pointer-events: none;
   }
   .nav-btn {
     background: transparent; border: 1px solid transparent; color: var(--muted);
     font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 500;
-    padding: 8px 4px; border-radius: 14px; cursor: pointer; transition: all 0.25s;
+    padding: 9px 4px; border-radius: var(--r-lg); cursor: pointer; transition: all 0.25s;
     display: flex; flex-direction: column; align-items: center; gap: 3px;
     position: relative;
   }
@@ -310,7 +315,7 @@
   .profile-card {
     margin: 16px 20px;
     background: var(--card); border: 1px solid var(--border);
-    border-radius: 20px; padding: 18px;
+    border-radius: var(--r-lg); padding: 18px;
   }
   .profile-card-top { display: flex; align-items: center; gap: 14px; }
   .avatar-lg {
@@ -334,7 +339,7 @@
   }
   .metrics-section { padding: 0 20px 16px; }
   .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-  .metric-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
+  .metric-box { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-md); padding: 16px; }
   .metric-lbl { font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
   .metric-num { font-family: 'Bebas Neue', sans-serif; font-size: 38px; color: var(--accent); line-height: 1; margin-top: 4px; }
   .metric-unit { font-size: 14px; color: var(--muted); font-family: 'DM Sans', sans-serif; }
