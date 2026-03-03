@@ -540,7 +540,7 @@
       <div>
         <div class="app-title">BUDDYG</div>
         <div class="app-motto">Risk Almayan Viski İçemez!</div>
-        <button class="spotify-btn" onclick="openSpotifyPlaylist()">Spotify Playlist ▶</button>
+        <button class="spotify-btn" onclick="openSpotifyPlaylist()">BAS ULAN BAS!</button>
         <div class="date-text" id="dateText"></div>
       </div>
       <button class="user-pill" onclick="openSwitcher()">
@@ -1205,8 +1205,19 @@ function switchUser(uid) {
 function setAccent(c) { document.documentElement.style.setProperty('--accent', c); }
 
 function openSpotifyPlaylist() {
-  const url = 'https://open.spotify.com/playlist/2h2J4Mp7725s9COU05r6m8?si=ae7ba28dfefd444e';
-  window.open(url, '_blank');
+  const appUrl = 'spotify:playlist:2h2J4Mp7725s9COU05r6m8';
+  const webUrl = 'https://open.spotify.com/playlist/2h2J4Mp7725s9COU05r6m8?si=ae7ba28dfefd444e';
+
+  // First try opening Spotify app directly, then fallback to web if app isn't available.
+  const fallback = setTimeout(() => {
+    window.location.href = webUrl;
+  }, 900);
+
+  const clear = () => { clearTimeout(fallback); document.removeEventListener('visibilitychange', onVis); };
+  const onVis = () => { if (document.hidden) clear(); };
+  document.addEventListener('visibilitychange', onVis);
+
+  window.location.href = appUrl;
 }
 
 function setAuthMsg(msg, isErr) {
