@@ -72,17 +72,11 @@
   /* HEADER */
   .header {
     padding: 52px 20px 16px;
-    background: linear-gradient(180deg, var(--panel-blend-top) 0%, var(--panel-blend-btm) 100%);
+    background: linear-gradient(180deg, rgba(10, 14, 20, 0.84) 0%, rgba(8, 11, 16, 0.74) 100%);
     backdrop-filter: blur(10px) saturate(112%);
     -webkit-backdrop-filter: blur(10px) saturate(112%);
     position: relative;
     border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
-  .header::after {
-    content: "";
-    position: absolute; left: 0; right: 0; bottom: -1px; height: 28px;
-    pointer-events: none;
-    background: linear-gradient(180deg, rgba(6,8,11,0.2) 0%, rgba(6,8,11,0) 100%);
   }
   .header-top { display: flex; justify-content: space-between; align-items: flex-start; }
   .brand-row {
