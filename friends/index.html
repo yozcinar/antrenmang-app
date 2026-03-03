@@ -871,6 +871,7 @@
     <div class="sheet-footer">
       <button class="sheet-btn primary" onclick="authSignInByName()">GİRİŞ YAP</button>
       <button class="sheet-btn secondary" onclick="authSignUpByName()">KAYIT OL</button>
+      <button class="sheet-btn secondary" onclick="authSignInGoogle()">GOOGLE İLE DEVAM ET</button>
     </div>
   </div>
 </div>
@@ -1471,6 +1472,8 @@ function currentAuthInput() {
 }
 function userDisplayName() {
   const meta = sbUser?.user_metadata || {};
+  if (meta.full_name) return String(meta.full_name).slice(0, 20);
+  if (meta.name) return String(meta.name).slice(0, 20);
   if (meta.display_name) return String(meta.display_name);
   if (pendingAuthName) return pendingAuthName;
   const em = sbUser?.email || '';
@@ -1512,6 +1515,18 @@ async function authSignUpByName() {
     return;
   }
   setAuthMsg('Kayıt başarılı.', false);
+}
+async function authSignInGoogle() {
+  if (!sb) return;
+  setAuthMsg('Google yönlendirmesi yapılıyor...', false);
+  const redirectTo = window.location.href.split('#')[0].split('?')[0];
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo }
+  });
+  if (error) {
+    setAuthMsg('Google girişi başlatılamadı. Supabase ayarını kontrol et.', true);
+  }
 }
 async function bootstrapCloudForUser() {
   if (!sbUser) return;
