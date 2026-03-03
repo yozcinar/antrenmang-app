@@ -17,6 +17,8 @@
     --glass-shadow: 0 12px 26px rgba(0,0,0,0.28);
     --glass-rim: rgba(255,255,255,0.2);
     --glass-rim-soft: rgba(255,255,255,0.08);
+    --panel-blend-top: rgba(10, 14, 20, 0.62);
+    --panel-blend-btm: rgba(6, 9, 14, 0.26);
     --anim-fast: 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
     --anim-mid: 0.28s cubic-bezier(0.22, 1, 0.36, 1);
     --r-sm: 10px;
@@ -70,11 +72,17 @@
   /* HEADER */
   .header {
     padding: 52px 20px 16px;
-    background: linear-gradient(180deg, rgba(10,12,16,0.9) 0%, rgba(7,9,12,0.74) 100%);
-    backdrop-filter: blur(14px) saturate(118%);
-    -webkit-backdrop-filter: blur(14px) saturate(118%);
+    background: linear-gradient(180deg, var(--panel-blend-top) 0%, var(--panel-blend-btm) 100%);
+    backdrop-filter: blur(10px) saturate(112%);
+    -webkit-backdrop-filter: blur(10px) saturate(112%);
     position: relative;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .header::after {
+    content: "";
+    position: absolute; left: 0; right: 0; bottom: -1px; height: 28px;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(6,8,11,0.2) 0%, rgba(6,8,11,0) 100%);
   }
   .header-top { display: flex; justify-content: space-between; align-items: flex-start; }
   .brand-row {
@@ -173,9 +181,9 @@
     height: 132px;
     border-radius: 14px;
     overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.12);
-    background: linear-gradient(180deg, rgba(12,14,18,0.9) 0%, rgba(8,10,14,0.95) 100%);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 12px 24px rgba(0,0,0,0.32);
+    border: 1px solid var(--glass-border);
+    background: linear-gradient(180deg, var(--glass-bg-top) 0%, var(--glass-bg-bottom) 100%);
+    box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow);
   }
   .team-hero-shell::before,
   .team-hero-shell::after {
@@ -195,7 +203,7 @@
       radial-gradient(80% 120% at 100% 50%, rgba(6,8,11,0.75) 0%, rgba(6,8,11,0) 62%);
   }
   .team-hero-img {
-    width: 100%; height: 100%; object-fit: cover; object-position: center 34%;
+    width: 100%; height: 100%; object-fit: cover; object-position: center 40%;
     filter: grayscale(0.92) saturate(0.15) contrast(1.12);
     animation: heroDrift 15s ease-in-out infinite alternate;
   }
@@ -216,6 +224,7 @@
     cursor: pointer; transition: all 0.2s;
   }
   .week-btn.active { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 600; }
+  .week-btn { box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 8px 16px rgba(0,0,0,0.22); }
 
   /* DARK GLASS SYSTEM */
   .user-pill, .week-btn, .stat-box, .day-tab, .exercise-card, .profile-card, .metric-box, .program-card, .user-item, .sheet {
@@ -245,6 +254,7 @@
 
   /* STATS BAR */
   .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 12px 20px; }
+  .stats-bar { margin-top: 2px; }
   .stat-box {
     background: var(--card); border: 1px solid var(--border);
     border-radius: var(--r-md); padding: 12px; text-align: center;
@@ -261,6 +271,7 @@
     background: var(--card); border: 1px solid var(--border);
     border-radius: var(--r-md); padding: 10px 6px; text-align: center;
     cursor: pointer; transition: all 0.2s;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), 0 8px 16px rgba(0,0,0,0.2);
   }
   .day-tab.active { background: var(--accent); border-color: var(--accent); }
   .day-tab.active .day-label, .day-tab.active .day-name { color: #000; }
