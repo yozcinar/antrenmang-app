@@ -1417,6 +1417,15 @@ function getWeekProgramState(w, createIfMissing = true) {
 }
 function customForWeek(w = st.currentWeek) { return getWeekProgramState(w).custom; }
 function dayNamesForWeek(w = st.currentWeek) { return getWeekProgramState(w).dayNames; }
+function propagateProgramForward(fromWeek) {
+  const src = getWeekProgramState(fromWeek);
+  for (let w = fromWeek + 1; w <= 16; w++) {
+    st.weekPrograms[w] = {
+      custom: cloneJson(src.custom || {}),
+      dayNames: cloneJson(src.dayNames || {})
+    };
+  }
+}
 
 function formatShortDateTR(ts) {
   if (!ts) return '';
@@ -1738,6 +1747,7 @@ function resetProgramState() {
 function applyProgramPayload(payload) {
   resetProgramState();
   st.weekPrograms[1] = { custom: cloneJson(payload.custom || {}), dayNames: cloneJson(payload.dayNames || {}) };
+  propagateProgramForward(1);
   st.custom = cloneJson(payload.custom || {}); // legacy compatibility cache
   st.dayNames = cloneJson(payload.dayNames || {}); // legacy compatibility cache
   saveData();
@@ -1952,6 +1962,7 @@ function saveExercise() {
   const weekCustom = customForWeek(st.currentWeek);
   if (!weekCustom[addExDay]) weekCustom[addExDay] = [];
   weekCustom[addExDay].push({ name, sets, reps, tip, isCustom: true });
+  propagateProgramForward(st.currentWeek);
   syncDayCompletionState(st.currentWeek, addExDay);
   saveData();
   document.getElementById('addExOverlay').classList.remove('open');
@@ -1962,6 +1973,7 @@ function delCustomEx(ci) {
   const weekCustom = customForWeek(st.currentWeek);
   if (weekCustom[d]) {
     weekCustom[d].splice(ci, 1);
+    propagateProgramForward(st.currentWeek);
     syncDayCompletionState(st.currentWeek, d);
     saveData();
     render();
@@ -2317,6 +2329,7 @@ function saveDayName() {
     name: name || BASE_PROGRAM[d]?.name || '',
     sub: sub || BASE_PROGRAM[d]?.sub || ''
   };
+  propagateProgramForward(st.currentWeek);
   saveData();
   renderWorkout();
   renderDayTabs();
