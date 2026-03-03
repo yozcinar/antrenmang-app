@@ -1471,6 +1471,10 @@ async function bootstrapCloudForUser() {
   }
   if (data?.payload) payload = data.payload;
   if (!payload) payload = loadCloudCache(sbUser.id);
+  // If cloud is empty for this session, keep existing local profile instead of wiping it.
+  if (!payload && profiles?.users?.length) {
+    payload = collectStatePayload();
+  }
   if (!payload) payload = { profiles: { currentId: null, users: [] }, userDataMap: {} };
   applyStatePayload(payload);
 
