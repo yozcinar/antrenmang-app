@@ -75,10 +75,55 @@
     border-bottom: 1px solid rgba(255,255,255,0.08);
   }
   .header-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .brand-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .app-title-wrap {
+    position: relative;
+    display: inline-block;
+    isolation: isolate;
+  }
+  .app-title-wrap::before {
+    content: "";
+    position: absolute;
+    left: -8px;
+    right: -8px;
+    top: 2px;
+    bottom: -2px;
+    border-radius: 10px;
+    background:
+      radial-gradient(70% 100% at 15% 50%, color-mix(in srgb, var(--accent) 55%, transparent) 0%, transparent 70%),
+      radial-gradient(70% 100% at 85% 50%, color-mix(in srgb, var(--accent) 55%, transparent) 0%, transparent 70%);
+    filter: blur(11px);
+    opacity: 0.38;
+    z-index: -1;
+    animation: titleGlowDrift 7s ease-in-out infinite alternate;
+  }
+  @keyframes titleGlowDrift {
+    0% { transform: translateX(-4px) scale(0.98); opacity: 0.3; }
+    100% { transform: translateX(4px) scale(1.04); opacity: 0.44; }
+  }
   .app-title {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 36px; letter-spacing: 2px; line-height: 1; color: var(--accent);
   }
+  .mini-bass-btn {
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(32,186,89,0.18) 0%, rgba(19,111,58,0.28) 100%);
+    color: #d8ffe8;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 1px;
+    padding: 7px 10px 6px;
+    line-height: 1;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 6px 14px rgba(0,0,0,0.28);
+  }
+  .mini-bass-btn:active { transform: scale(0.97); opacity: 0.92; }
   .date-text { color: var(--muted); font-size: 13px; margin-top: 4px; }
   .user-pill {
     display: flex; align-items: center; gap: 8px;
@@ -114,24 +159,6 @@
     color: transparent;
     text-shadow: 0 0 20px rgba(142,232,255,0.18);
   }
-  .bass-fab {
-    position: fixed;
-    right: 16px;
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 86px);
-    z-index: 210;
-    min-width: 156px;
-    border: 1px solid rgba(255,255,255,0.18);
-    border-radius: 999px;
-    padding: 10px 14px;
-    background: linear-gradient(180deg, rgba(32,186,89,0.2) 0%, rgba(19,111,58,0.3) 100%);
-    color: #d8ffe8;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 18px;
-    letter-spacing: 1.4px;
-    cursor: pointer;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 10px 24px rgba(0,0,0,0.38);
-  }
-  .bass-fab:active { transform: scale(0.985); opacity: 0.94; }
   .team-hero-shell {
     position: relative;
     margin-top: 12px;
@@ -783,7 +810,10 @@
   <div class="header">
     <div class="header-top">
       <div>
-        <div class="app-title">BUDDYG</div>
+        <div class="brand-row">
+          <div class="app-title-wrap"><div class="app-title">BUDDYG</div></div>
+          <button class="mini-bass-btn" onclick="playTeamPlaylist()">BAS ULAN BASS</button>
+        </div>
         <div class="date-text" id="dateText"></div>
       </div>
       <button class="user-pill" onclick="openSwitcher()">
@@ -813,8 +843,6 @@
   </div>
   <div id="profileContent"></div>
 </div>
-
-<button class="bass-fab" onclick="playTeamPlaylist()">BAS ULAN BASS</button>
 
 <!-- ====== BOTTOM NAV ====== -->
 <div class="bottom-nav">
