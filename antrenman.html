@@ -45,6 +45,19 @@
     text-transform: uppercase;
     text-shadow: 0 0 12px rgba(232,255,71,0.45);
   }
+  .spotify-btn {
+    margin-top: 8px;
+    border: 1px solid #1db954;
+    background: rgba(29,185,84,0.14);
+    color: #8dffbe;
+    border-radius: 999px;
+    padding: 5px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+  }
+  .spotify-btn:active { opacity: 0.85; }
   .date-text { color: var(--muted); font-size: 13px; margin-top: 4px; }
   .user-pill {
     display: flex; align-items: center; gap: 8px;
@@ -527,6 +540,7 @@
       <div>
         <div class="app-title">BUDDYG</div>
         <div class="app-motto">Risk Almayan Viski İçemez!</div>
+        <button class="spotify-btn" onclick="openSpotifyPlaylist()">Spotify Playlist ▶</button>
         <div class="date-text" id="dateText"></div>
       </div>
       <button class="user-pill" onclick="openSwitcher()">
@@ -1189,6 +1203,11 @@ function switchUser(uid) {
 }
 
 function setAccent(c) { document.documentElement.style.setProperty('--accent', c); }
+
+function openSpotifyPlaylist() {
+  const url = 'https://open.spotify.com/playlist/2h2J4Mp7725s9COU05r6m8?si=ae7ba28dfefd444e';
+  window.open(url, '_blank');
+}
 
 function setAuthMsg(msg, isErr) {
   const el = document.getElementById('authMsg');
