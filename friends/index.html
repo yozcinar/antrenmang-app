@@ -102,6 +102,75 @@
     overflow-x: auto; scrollbar-width: none; padding-bottom: 4px;
   }
   .week-nav::-webkit-scrollbar { display: none; }
+  .team-motto {
+    margin-top: 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 1.3px;
+    line-height: 1;
+    background: linear-gradient(92deg, #ffffff 0%, #8ee8ff 45%, #e8ff47 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 20px rgba(142,232,255,0.18);
+  }
+  .team-cta-row { margin-top: 10px; }
+  .bass-btn {
+    width: 100%;
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 12px;
+    padding: 10px 12px;
+    background: linear-gradient(180deg, rgba(32,186,89,0.2) 0%, rgba(19,111,58,0.3) 100%);
+    color: #d8ffe8;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 1.6px;
+    cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 10px 24px rgba(0,0,0,0.28);
+  }
+  .bass-btn:active { transform: scale(0.985); opacity: 0.94; }
+  .team-hero-shell {
+    position: relative;
+    margin-top: 12px;
+    height: 132px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: linear-gradient(180deg, rgba(12,14,18,0.9) 0%, rgba(8,10,14,0.95) 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 12px 24px rgba(0,0,0,0.32);
+  }
+  .team-hero-shell::before,
+  .team-hero-shell::after {
+    content: "";
+    position: absolute; left: 0; right: 0; height: 26px; z-index: 2; pointer-events: none;
+    background: linear-gradient(180deg, rgba(6,8,11,0.9), rgba(6,8,11,0));
+  }
+  .team-hero-shell::before { top: 0; }
+  .team-hero-shell::after {
+    bottom: 0;
+    transform: rotate(180deg);
+  }
+  .team-hero-vignette {
+    position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    background:
+      radial-gradient(80% 120% at 0% 50%, rgba(6,8,11,0.75) 0%, rgba(6,8,11,0) 62%),
+      radial-gradient(80% 120% at 100% 50%, rgba(6,8,11,0.75) 0%, rgba(6,8,11,0) 62%);
+  }
+  .team-hero-img {
+    width: 100%; height: 100%; object-fit: cover; object-position: center 28%;
+    filter: saturate(1.05) contrast(1.05);
+    animation: heroDrift 15s ease-in-out infinite alternate;
+  }
+  .team-hero-fallback {
+    position: absolute; inset: 0;
+    display: none; align-items: center; justify-content: center;
+    color: rgba(255,255,255,0.55);
+    font-family: 'Bebas Neue', sans-serif; font-size: 24px; letter-spacing: 2px;
+  }
+  @keyframes heroDrift {
+    0% { transform: scale(1.06) translateX(-1.5%) translateY(0%); }
+    100% { transform: scale(1.08) translateX(1.4%) translateY(-1.2%); }
+  }
   .week-btn {
     flex-shrink: 0; background: var(--card); border: 1px solid var(--border);
     color: var(--muted); font-family: 'DM Sans', sans-serif;
@@ -718,6 +787,16 @@
         <div class="user-avatar" id="hAvatar"></div>
         <span class="user-pill-name" id="hName"></span>
       </button>
+    </div>
+    <div class="team-motto">Risk Almayan Viski İçemez!</div>
+    <div class="team-cta-row">
+      <button class="bass-btn" onclick="playTeamPlaylist()">BAS ULAN BASS</button>
+    </div>
+    <div class="team-hero-shell">
+      <img class="team-hero-img" src="team-hero.jpg" alt="BuddyG team stage"
+        onerror="this.style.display='none';document.getElementById('teamHeroFallback').style.display='flex';">
+      <div class="team-hero-vignette"></div>
+      <div class="team-hero-fallback" id="teamHeroFallback">BUDDYG FRIENDS</div>
     </div>
     <div class="week-nav" id="weekNav"></div>
   </div>
@@ -1412,6 +1491,19 @@ function switchUser(uid) {
 }
 
 function setAccent(c) { document.documentElement.style.setProperty('--accent', c); }
+
+const TEAM_SPOTIFY_WEB = 'https://open.spotify.com/playlist/2h2J4Mp7725s9COU05r6m8?si=85fbcfccf3954cc7';
+const TEAM_SPOTIFY_URI = 'spotify:playlist:2h2J4Mp7725s9COU05r6m8';
+function playTeamPlaylist() {
+  const start = Date.now();
+  window.location.href = TEAM_SPOTIFY_URI;
+  // Fallback: if deep link doesn't open app, open web URL.
+  setTimeout(() => {
+    if (Date.now() - start < 1800) {
+      window.open(TEAM_SPOTIFY_WEB, '_blank', 'noopener');
+    }
+  }, 900);
+}
 
 function pickProfilePhoto() {
   const inp = document.getElementById('profilePhotoInput');
