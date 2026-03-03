@@ -1121,7 +1121,40 @@ function toggleRestDay() {
 }
 
 function toggleEx(i) { document.getElementById('ex'+i).classList.toggle('expanded'); }
-function markEx(i) { const ed = exData(st.currentWeek, st.currentDay, i); ed.done = !ed.done; saveData(); renderWorkout(); }
+function syncDayCompletionState(w, d) {
+  const dd = dayData(w, d);
+  const wasCompleted = !!dd.completed;
+  const prog = dayProgram(d);
+
+  if (!prog || prog.exercises.length === 0) {
+    dd.completed = false;
+    dd.completedAt = null;
+    return { becameCompleted: false, becameIncomplete: wasCompleted };
+  }
+
+  let doneCount = 0;
+  for (let x = 0; x < prog.exercises.length; x++) {
+    if (exData(w, d, x).done) doneCount++;
+  }
+
+  const allDone = doneCount === prog.exercises.length;
+  dd.completed = allDone;
+  dd.completedAt = allDone ? (dd.completedAt || Date.now()) : null;
+
+  return { becameCompleted: !wasCompleted && allDone, becameIncomplete: wasCompleted && !allDone };
+}
+
+function markEx(i) {
+  const w = st.currentWeek;
+  const d = st.currentDay;
+  const ed = exData(w, d, i);
+  ed.done = !ed.done;
+  const sync = syncDayCompletionState(w, d);
+  if (sync.becameCompleted) toast('✓ Antrenman tamamlandı!');
+
+  saveData();
+  render();
+}
 function logSet(ei, si, f, v) { const ed = exData(st.currentWeek, st.currentDay, ei); if (!ed.sets[si]) ed.sets[si] = {}; ed.sets[si][f] = v; saveData(); renderStats(); }
 function completeDay() {
   const dd = dayData(st.currentWeek, st.currentDay);
@@ -1269,13 +1302,19 @@ function saveExercise() {
   const tip = document.getElementById('exTip').value.trim();
   if (!st.custom[addExDay]) st.custom[addExDay] = [];
   st.custom[addExDay].push({ name, sets, reps, tip, isCustom: true });
+  syncDayCompletionState(st.currentWeek, addExDay);
   saveData();
   document.getElementById('addExOverlay').classList.remove('open');
-  renderWorkout();
+  render();
 }
 function delCustomEx(ci) {
   const d = st.currentDay;
-  if (st.custom[d]) { st.custom[d].splice(ci, 1); saveData(); renderWorkout(); }
+  if (st.custom[d]) {
+    st.custom[d].splice(ci, 1);
+    syncDayCompletionState(st.currentWeek, d);
+    saveData();
+    render();
+  }
 }
 
 // ============================================================
