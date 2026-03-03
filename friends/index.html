@@ -706,6 +706,28 @@
   }
   .google-btn:active { transform: scale(0.985); opacity: 0.92; }
   .google-btn svg { width: 18px; height: 18px; display: block; }
+  .short-pop-sheet {
+    border-radius: 22px !important;
+    max-width: 360px;
+    margin: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: radial-gradient(120% 140% at 20% 0%, rgba(255,75,75,0.25) 0%, rgba(10,12,16,0.94) 42%, rgba(7,9,12,0.97) 100%);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.58), inset 0 1px 0 rgba(255,255,255,0.14);
+  }
+  .short-pop-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    letter-spacing: 2px;
+    line-height: 0.9;
+    color: #ffefef;
+    text-align: center;
+    text-shadow: 0 0 24px rgba(255,110,110,0.42);
+    animation: shortPopPulse 1.4s ease-in-out infinite alternate;
+  }
+  @keyframes shortPopPulse {
+    0% { transform: scale(1); opacity: 0.92; }
+    100% { transform: scale(1.03); opacity: 1; }
+  }
 
   /* VIDEO MODAL */
   .video-wrap { background: #111; display: flex; align-items: center; justify-content: center; min-height: 200px; position: relative; }
@@ -1093,6 +1115,18 @@
     <div class="sheet-footer">
       <button class="sheet-btn primary" onclick="importProgram()">YÜKLE</button>
       <button class="sheet-btn secondary" onclick="document.getElementById('importOverlay').classList.remove('open')">İptal</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== SHORT HEIGHT EASTER EGG ====== -->
+<div class="overlay" id="shortHeightOverlay" style="display:none;align-items:center;justify-content:center;">
+  <div class="sheet short-pop-sheet">
+    <div style="padding:26px 22px 10px;">
+      <div class="short-pop-title">EZİK OE</div>
+    </div>
+    <div class="sheet-footer" style="padding:0 22px 22px;">
+      <button class="sheet-btn secondary" style="font-weight:800;" onclick="closeShortHeightPopup()">AĞLAYACAĞIM</button>
     </div>
   </div>
 </div>
@@ -1563,6 +1597,24 @@ function playTeamPlaylist() {
       window.open(TEAM_SPOTIFY_WEB, '_blank', 'noopener');
     }
   }, 900);
+}
+function shortHeightSeenKey() {
+  return `buddyg_short_height_seen_${profiles?.currentId || 'default'}`;
+}
+function closeShortHeightPopup() {
+  const ov = document.getElementById('shortHeightOverlay');
+  if (!ov) return;
+  ov.classList.remove('open');
+  ov.style.display = 'none';
+}
+function showShortHeightPopupOnce() {
+  const k = shortHeightSeenKey();
+  if (localStorage.getItem(k) === '1') return;
+  localStorage.setItem(k, '1');
+  const ov = document.getElementById('shortHeightOverlay');
+  if (!ov) return;
+  ov.style.display = 'flex';
+  ov.classList.add('open');
 }
 
 function pickProfilePhoto() {
@@ -2794,6 +2846,8 @@ function saveMetrics() {
   const h = parseMetricNumber(document.getElementById('hInput').value);
   const w = parseMetricNumber(document.getElementById('wInput').value);
   if (!st.metrics) st.metrics = { height: null, weightLog: [] };
+  const prevHeight = Number(st.metrics.height);
+  const hadHeightBefore = Number.isFinite(prevHeight) && prevHeight > 100 && prevHeight < 250;
   if (h > 100 && h < 250) st.metrics.height = h;
   else if (String(document.getElementById('hInput').value || '').trim()) toast('Boy değeri geçersiz');
   if (w > 30 && w < 300) {
@@ -2822,6 +2876,7 @@ function saveMetrics() {
   }
   else if (String(document.getElementById('wInput').value || '').trim()) toast('Kilo değeri geçersiz');
   saveData(); renderStats(); renderProfile(); toast('✓ Kaydedildi');
+  if (!hadHeightBefore && h > 100 && h < 180) showShortHeightPopupOnce();
 }
 
 function deleteWeightEntry(entryId) {
