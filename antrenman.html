@@ -10,6 +10,8 @@
     --bg: #0a0a0a; --surface: #141414; --card: #1c1c1c;
     --accent: #e8ff47; --text: #f0f0f0; --muted: #666;
     --border: #2a2a2a; --done: #2a3a1a; --done-border: #6abf3a;
+    --anim-fast: 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
+    --anim-mid: 0.28s cubic-bezier(0.22, 1, 0.36, 1);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -551,6 +553,51 @@
   }
   .name-edit-row .confirm { background: var(--accent); color: #000; }
   .name-edit-row .cancel { background: var(--border); color: var(--text); }
+
+  /* INTERACTION POLISH */
+  button { -webkit-tap-highlight-color: transparent; }
+  .week-btn, .day-tab, .nav-btn, .user-pill, .exercise-card, .add-ex-btn, .complete-btn,
+  .sheet-btn, .program-btn, .save-btn, .edit-name-btn, .template-item, .user-item, .add-user-btn,
+  .pool-choice-card, .pool-item, .w-del {
+    transition:
+      transform var(--anim-fast),
+      box-shadow var(--anim-mid),
+      background-color var(--anim-mid),
+      border-color var(--anim-mid),
+      color var(--anim-mid),
+      opacity var(--anim-fast);
+    will-change: transform;
+  }
+  .week-btn:active, .day-tab:active, .nav-btn:active, .user-pill:active, .exercise-card:active,
+  .add-ex-btn:active, .complete-btn:active, .sheet-btn:active, .program-btn:active, .save-btn:active,
+  .edit-name-btn:active, .template-item:active, .user-item:active, .add-user-btn:active,
+  .pool-choice-card:active, .pool-item:active, .w-del:active {
+    transform: translateY(1px) scale(0.985);
+  }
+  .week-btn:focus-visible, .day-tab:focus-visible, .nav-btn:focus-visible, .user-pill:focus-visible,
+  .add-ex-btn:focus-visible, .complete-btn:focus-visible, .sheet-btn:focus-visible, .program-btn:focus-visible,
+  .save-btn:focus-visible, .edit-name-btn:focus-visible, .template-item:focus-visible, .user-item:focus-visible,
+  .add-user-btn:focus-visible, .pool-choice-card:focus-visible, .pool-item:focus-visible, .w-del:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(232,255,71,0.28), 0 0 18px rgba(232,255,71,0.2);
+  }
+
+  .complete-btn, .sheet-btn.primary, .program-btn.primary, .save-btn {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .complete-btn::after, .sheet-btn.primary::after, .program-btn.primary::after, .save-btn::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.34) 50%, transparent 65%);
+    transform: translateX(-125%);
+    transition: transform 0.7s ease;
+    pointer-events: none;
+  }
+  .complete-btn:hover::after, .sheet-btn.primary:hover::after, .program-btn.primary:hover::after, .save-btn:hover::after {
+    transform: translateX(125%);
+  }
 </style>
 </head>
 <body>
