@@ -13,12 +13,42 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    background: var(--bg); color: var(--text);
+    background: radial-gradient(140% 120% at 50% -20%, #0f141a 0%, var(--bg) 48%, #050505 100%);
+    color: var(--text);
     font-family: 'DM Sans', sans-serif;
     min-height: 100vh; max-width: 430px;
     margin: 0 auto; padding-bottom: 88px;
     overflow-x: hidden;
+    position: relative;
+    isolation: isolate;
   }
+
+  /* AMBIENT BACKGROUND */
+  .ambient-bg {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .ambient-beam {
+    position: absolute; width: 120vw; height: 38vh; filter: blur(56px); opacity: 0.28;
+    transform-origin: 50% 50%;
+    background: linear-gradient(90deg,
+      rgba(0,0,0,0) 0%,
+      rgba(79,240,255,0.2) 40%,
+      rgba(232,255,71,0.3) 50%,
+      rgba(79,240,255,0.2) 60%,
+      rgba(0,0,0,0) 100%);
+  }
+  .beam-a { top: 12vh; left: -24vw; animation: beamMoveA 26s ease-in-out infinite alternate; }
+  .beam-b { bottom: 8vh; right: -28vw; opacity: 0.2; animation: beamMoveB 34s ease-in-out infinite alternate; }
+  @keyframes beamMoveA {
+    0% { transform: rotate(-8deg) translateX(-4vw) translateY(0); }
+    100% { transform: rotate(6deg) translateX(8vw) translateY(-2vh); }
+  }
+  @keyframes beamMoveB {
+    0% { transform: rotate(12deg) translateX(4vw) translateY(1vh); }
+    100% { transform: rotate(-10deg) translateX(-10vw) translateY(-2vh); }
+  }
+
+  .page { position: relative; z-index: 1; }
 
   /* PAGES */
   .page { display: none; }
@@ -524,6 +554,10 @@
 </style>
 </head>
 <body>
+<div class="ambient-bg" aria-hidden="true">
+  <div class="ambient-beam beam-a"></div>
+  <div class="ambient-beam beam-b"></div>
+</div>
 
 <!-- ====== WORKOUT PAGE ====== -->
 <div id="page-workout" class="page active">
