@@ -63,9 +63,11 @@
   /* HEADER */
   .header {
     padding: 52px 20px 16px;
-    background: linear-gradient(180deg, #111 0%, var(--bg) 100%);
+    background: linear-gradient(180deg, rgba(10,12,16,0.9) 0%, rgba(7,9,12,0.74) 100%);
+    backdrop-filter: blur(14px) saturate(118%);
+    -webkit-backdrop-filter: blur(14px) saturate(118%);
     position: sticky; top: 0; z-index: 100;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
   }
   .header-top { display: flex; justify-content: space-between; align-items: flex-start; }
   .app-title {
@@ -342,8 +344,10 @@
   /* PROFILE PAGE */
   .profile-header {
     padding: 52px 20px 20px;
-    background: linear-gradient(180deg, #111 0%, var(--bg) 100%);
-    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(10,12,16,0.9) 0%, rgba(7,9,12,0.74) 100%);
+    backdrop-filter: blur(14px) saturate(118%);
+    -webkit-backdrop-filter: blur(14px) saturate(118%);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
   }
   .profile-header-title { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 2px; color: var(--accent); }
 
