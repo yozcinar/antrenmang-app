@@ -1439,6 +1439,7 @@ function dayData(w, d) {
 function exData(w, d, i) { const dd = dayData(w,d); if (!dd.exercises[i]) dd.exercises[i] = {done:false,sets:{}}; return dd.exercises[i]; }
 
 function cloneJson(v) { return JSON.parse(JSON.stringify(v || {})); }
+function generateExerciseId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 function ensureWeekProgramState() {
   if (!st.weekPrograms) st.weekPrograms = {};
   // Backward compatibility: migrate legacy global program into week 1
@@ -1460,6 +1461,14 @@ function getWeekProgramState(w, createIfMissing = true) {
 }
 function customForWeek(w = st.currentWeek) { return getWeekProgramState(w).custom; }
 function dayNamesForWeek(w = st.currentWeek) { return getWeekProgramState(w).dayNames; }
+function ensureDayExerciseIds(w, d) {
+  const weekCustom = customForWeek(w);
+  const arr = weekCustom[d];
+  if (!Array.isArray(arr)) return;
+  for (const ex of arr) {
+    if (!ex._id) ex._id = generateExerciseId();
+  }
+}
 function propagateProgramForward(fromWeek) {
   const src = getWeekProgramState(fromWeek);
   for (let w = fromWeek + 1; w <= 16; w++) {
@@ -1579,7 +1588,8 @@ function renderDayTabs() {
 function renderWorkout() {
   const content = document.getElementById('workoutContent');
   const d = st.currentDay, w = st.currentWeek;
-  const prog = dayProgram(d);
+  ensureDayExerciseIds(w, d);
+  const prog = dayProgram(d, w);
   const user = me();
   const dd = dayData(w, d);
 
@@ -1669,12 +1679,12 @@ function renderWorkout() {
     const tip = ex.tip || TIPS[ex.name] || '';
     const videoUrl = getVideoUrl(ex.name);
     const hasVid = !!videoUrl;
-    const custIdx = i;
+    const exId = ex._id || '';
     const n = ex.name.replace(/'/g,"\\'");
     const meta = ex.sets + ' set · ' + ex.reps + ' tekrar';
 
     card.innerHTML = `
-      ${ex.isCustom ? `<div class="swipe-delete-slot"><button onclick="delCustomEx(${custIdx})">✕</button></div>` : ''}
+      ${ex.isCustom ? `<div class="swipe-delete-slot"><button onclick="delCustomExById('${exId}')">✕</button></div>` : ''}
       <div class="exercise-main">
         <div class="exercise-header">
           <div class="ex-number">${String(i+1).padStart(2,'0')}</div>
@@ -2041,18 +2051,20 @@ function saveExercise() {
   const tip = document.getElementById('exTip').value.trim();
   const weekCustom = customForWeek(st.currentWeek);
   if (!weekCustom[addExDay]) weekCustom[addExDay] = [];
-  weekCustom[addExDay].push({ name, sets, reps, tip, isCustom: true });
+  weekCustom[addExDay].push({ _id: generateExerciseId(), name, sets, reps, tip, isCustom: true });
   propagateProgramForward(st.currentWeek);
   syncDayCompletionState(st.currentWeek, addExDay);
   saveData();
   document.getElementById('addExOverlay').classList.remove('open');
   render();
 }
-function delCustomEx(ci) {
+function delCustomExById(exId) {
   const d = st.currentDay;
   const weekCustom = customForWeek(st.currentWeek);
   if (weekCustom[d]) {
-    weekCustom[d].splice(ci, 1);
+    const idx = weekCustom[d].findIndex(ex => ex && ex._id === exId);
+    if (idx < 0) return;
+    weekCustom[d].splice(idx, 1);
     propagateProgramForward(st.currentWeek);
     syncDayCompletionState(st.currentWeek, d);
     saveData();
